@@ -24,9 +24,9 @@ then you can code endpoints for an album, genre and artists) and implement busin
 - [ ] use [Postgres] or [Mongo] as your database
 - [ ] use [Sequelize] or [Mongoose] as your [ORM]
 
-## Just finished? ðŸ’¯
+## Just finished?
 
-Great work! Send it to suporte@classsit.com.br. You will receive and answer back from our side in 3 business days ðŸ?ƒðŸ?ƒ
+Great work! Send it to suporte@classsit.com.br. You will receive and answer back from our side in 3 business days 
 
 [node]: https://nodejs.org/
 [express]: https://expressjs.com/
