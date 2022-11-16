@@ -26,7 +26,7 @@ then you can code endpoints for an album, genre and artists) and implement busin
 
 ## Just finished?
 
-Great work! Send it to suporte@classsit.com.br. You will receive and answer back from our side in 3 business days 
+Great work! Send it to suporte@classist.com.br. You will receive and answer back from our side in 3 business days 
 
 [node]: https://nodejs.org/
 [express]: https://expressjs.com/
