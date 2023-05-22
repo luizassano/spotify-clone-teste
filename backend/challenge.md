@@ -21,7 +21,7 @@ then you can code endpoints for an album, genre and artists) and implement busin
 
 - [ ] authentication using [JWT]
 - [ ] deploy it - good options may be [Heroku], [AWS] or [Digital Ocean]
-- [ ] use [Mysql], [Postgres] or [Mongo] as your database
+- [ ] use Mysql, [Postgres] or [Mongo] as your database
 - [ ] use [Sequelize] or [Mongoose] as your [ORM]
 
 ## Just finished?
