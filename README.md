@@ -45,7 +45,7 @@ All positions require:
 ## Description
 
 Backend developers will work on multiple projects to solve hard backend problems using Javascript, Nodejs, Express,
-MongoDB, Postgres, Python and AWS. They will deploy all these projects using these tools: Docker, ECS, GitHub Actions.
+MYsQL, , Python and AWS. They will deploy all these projects using these tools: Docker, ECS, GitHub Actions.
 
 ## Backend requirements
 
@@ -53,8 +53,7 @@ MongoDB, Postgres, Python and AWS. They will deploy all these projects using the
 - [ ] Knowledge of Nodejs
 - [ ] Knowledge of REST api
 - [ ] Knowledge of database modeling
-- [ ] Knowledge of MongoDB
-- [ ] Knowledge of Postgres/SQL
+- [ ] Knowledge of MySql
 - [ ] Understanding of tests and a testing framework (mocha, chai, jest or any other similar)
 - [ ] Good to know: Docker, AWS, understanding of distributed systems, Python (not required)
 - [ ] [Challenge](./backend/challenge.md)
