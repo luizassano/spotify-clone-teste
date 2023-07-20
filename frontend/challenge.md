@@ -10,7 +10,7 @@ One of the extra deliverables for this challenge is to create a [storybook] with
 
 ## Create a React app
 
-- [ ] it should use [CRA] or your any other boilerplate
+- [ ] it should use [NextJS] or your any other boilerplate
 - [ ] it should show retrieved data from a server, public API or a mocked JSON using a http library
 - [ ] it should be responsive
 - [ ] it should focus on components and code reusability
