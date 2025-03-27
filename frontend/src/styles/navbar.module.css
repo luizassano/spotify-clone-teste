@@ -1,0 +1,31 @@
+.customNavbar {
+  background-color: #000 !important;
+  padding: 12px 20px !important;
+  font-family: 'Montserrat', sans-serif !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.brand {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.logo {
+  width: 120px !important;
+  height: auto !important;
+  max-height: 40px !important;
+  filter: brightness(0) invert(1);
+}
+
+.navItem {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin: 0 15px !important;
+  text-transform: uppercase !important;
+  transition: color 0.3s ease-in-out;
+}
+
+.navItem:hover {
+  color: #1db954 !important;
+}
