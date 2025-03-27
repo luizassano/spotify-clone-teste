@@ -1,106 +1,66 @@
 import MainLayout from '../layouts/MainLayout';
-import { Container, Button, Image } from 'react-bootstrap';
+import { Container, Button, Form, InputGroup } from 'react-bootstrap';
 import Link from 'next/link';
+import { FiMail, FiLock } from 'react-icons/fi';
+import styles from '../styles/login.module.css';
 
-const Home = () => {
+const Login = () => {
   return (
-    <MainLayout title="Home - Spotify Clone">
-      <div className="home-page">
-        <Container className="text-center">
-          <Image 
-            src="https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg" 
-            alt="Spotify Logo" 
-            className="logo"
-          />
-          <h1 className="title">Milhões de músicas à sua escolha.</h1>
-          <p className="subtitle">Ouça o que quiser, sempre que quiser.</p>
-          <Link href="/songs" passHref>
-            <Button variant="success" size="lg" className="explore-button">
-              Explorar músicas
+    <MainLayout title="Login - Spotify Clone">
+      <div className={styles.container}>
+        <Container className="text-center d-flex flex-column justify-content-center" style={{ maxWidth: '400px' }}>
+          <div className={styles.spotifyLogo}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1DB954">
+              <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+            </svg>
+          </div>
+          
+          <h1 className={styles.title}>Entrar no Spotify Clone</h1>
+          
+          <Form className={styles.loginForm}>
+            <Form.Group controlId="formBasicEmail" className="mb-3">
+              <InputGroup>
+                <InputGroup.Text className={styles.inputIcon}>
+                  <FiMail size={18} />
+                </InputGroup.Text>
+                <Form.Control
+                  type="email"
+                  placeholder="Digite seu email"
+                  className={styles.inputField}
+                  size="lg"
+                />
+              </InputGroup>
+            </Form.Group>
+
+            <Form.Group controlId="formBasicPassword" className="mb-4">
+              <InputGroup>
+                <InputGroup.Text className={styles.inputIcon}>
+                  <FiLock size={18} />
+                </InputGroup.Text>
+                <Form.Control
+                  type="password"
+                  placeholder="Digite sua senha"
+                  className={styles.inputField}
+                  size="lg"
+                />
+              </InputGroup>
+            </Form.Group>
+
+            <Button variant="success" size="lg" className={styles.loginButton}>
+              Entrar
             </Button>
-          </Link>
+          </Form>
+
+          <p className={styles.signupLink}>
+            Não tem uma conta?{' '}
+            <Link href="/signup">
+              Cadastrar-se
+            </Link>
+          </p>
         </Container>
       </div>
-
-      <style jsx>{`
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-
-        .home-page {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          height: 100vh;
-          background: linear-gradient(135deg, #1db954, #191414);
-          color: white;
-          text-align: center;
-          font-family: 'Montserrat', sans-serif;
-          animation: fadeIn 1s ease-in-out;
-        }
-
-        .logo {
-          width: 200px;
-          margin-bottom: 20px;
-          opacity: 0;
-          transform: translateY(-20px);
-          animation: fadeInUp 1s forwards 0.5s;
-        }
-
-        .title {
-          font-size: 3rem;
-          font-weight: 700;
-          margin-bottom: 10px;
-          opacity: 0;
-          transform: translateY(-20px);
-          animation: fadeInUp 1s forwards 0.7s;
-        }
-
-        .subtitle {
-          font-size: 1.5rem;
-          margin-bottom: 30px;
-          opacity: 0;
-          transform: translateY(-20px);
-          animation: fadeInUp 1s forwards 0.9s;
-        }
-
-        .explore-button {
-          font-size: 1.2rem;
-          font-weight: bold;
-          padding: 12px 30px;
-          border-radius: 30px;
-          box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-          transition: transform 0.2s ease-in-out, box-shadow 0.2s;
-          opacity: 0;
-          transform: translateY(-20px);
-          animation: fadeInUp 1s forwards 1.1s;
-        }
-
-        .explore-button:hover {
-          transform: scale(1.05);
-          box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </MainLayout>
   );
 };
 
-export default Home;
+export default Login;

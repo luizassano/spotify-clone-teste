@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap');
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(135deg, #1db954, #191414);
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  padding: 20px;
+}
+
+.spotifyLogo {
+  opacity: 0;
+  animation: fadeInUp 0.5s forwards 0.1s;
+  margin-bottom: 2rem;
+}
+
+.spotifyLogo svg {
+  width: 242px;
+  height: 242px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInUp 0.5s forwards 0.3s;
+}
+
+.loginForm {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.inputField {
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  border-radius: 0 8px 8px 0 !important;
+  border: none;
+  background-color: #f8f9fa;
+}
+
+.inputField:focus {
+  box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.3);
+  background-color: white;
+}
+
+.inputIcon {
+  background-color: #f8f9fa;
+  border: none;
+  border-radius: 8px 0 0 8px !important;
+  padding: 0 15px;
+}
+
+.loginButton {
+  font-weight: 600;
+  padding: 12px;
+  border-radius: 30px;
+  border: none;
+  background-color: #1db954;
+  transition: all 0.2s ease;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s forwards 0.6s;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.loginButton:hover {
+  background-color: #1ed760;
+  transform: scale(1.02);
+}
+
+.signupLink {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  animation: fadeIn 0.5s forwards 0.8s;
+  margin-top: 1.5rem;
+}
+
+.signupLink a {
+  color: white;
+  text-decoration: none;
+  transition: color 0.2s;
+  font-weight: 500;
+}
+
+.signupLink a:hover {
+  color: #1db954;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
