@@ -1,28 +1,31 @@
 import MainLayout from "../layouts/MainLayout";
 import { Container, Button, Image } from "react-bootstrap";
 import Link from "next/link";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 const Home = () => {
   return (
     <MainLayout title="Home - Spotify Clone">
-      <div className="home-page">
-        <Container className="text-center">
-          <Image
-            src="https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg"
-            alt="Spotify Logo"
-            className="logo"
-          />
-          <h1 className="title">Milhões de músicas à sua escolha.</h1>
-          <p className="subtitle">Ouça o que quiser, sempre que quiser.</p>
-          <Link href="/songs" legacyBehavior>
-            <a>
-              <Button variant="success" size="lg" className="explore-button">
-                Explorar músicas
-              </Button>
-            </a>
-          </Link>
-        </Container>
-      </div>
+      <ProtectedRoute>
+        <div className="home-page">
+          <Container className="text-center">
+            <Image
+              src="https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg"
+              alt="Spotify Logo"
+              className="logo"
+            />
+            <h1 className="title">Milhões de músicas à sua escolha.</h1>
+            <p className="subtitle">Ouça o que quiser, sempre que quiser.</p>
+            <Link href="/songs" legacyBehavior>
+              <a>
+                <Button variant="success" size="lg" className="explore-button">
+                  Explorar músicas
+                </Button>
+              </a>
+            </Link>
+          </Container>
+        </div>
+      </ProtectedRoute>
 
       <style jsx>{`
         @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");

@@ -168,7 +168,7 @@ const Signup = () => {
 
           <p className={styles.loginLink}>
             Já tem uma conta?{" "}
-            <Link href="/login" className="text-success fw-semibold">
+            <Link href="/" className="text-success fw-semibold">
               Entrar
             </Link>
           </p>

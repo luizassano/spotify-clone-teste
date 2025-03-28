@@ -1,9 +1,20 @@
 import Link from "next/link";
-import { Navbar, Nav, Container, Image } from "react-bootstrap";
-import styles from "../styles/navbar.module.css"; 
+import { useRouter } from "next/router";
+import { Navbar, Nav, Container, Image, Button } from "react-bootstrap";
+import styles from "../styles/navbar.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { AuthService } from "../services/authService";
 
 const CustomNavbar = () => {
+  const router = useRouter();
+  const isAuthPage = router.pathname === '/' || router.pathname === '/signup';
+  const isAuthenticated = AuthService.isAuthenticated();
+
+  const handleLogout = () => {
+    AuthService.logout();
+    router.push('/');
+  };
+
   return (
     <Navbar expand="lg" className={styles.customNavbar}>
       <Container>
@@ -14,23 +25,35 @@ const CustomNavbar = () => {
             className={styles.logo}
           />
         </Navbar.Brand>
-        <Navbar.Toggle
-          aria-controls="basic-navbar-nav"
-          className="custom-toggler"
-        />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto">
-            <Link href="/home" passHref legacyBehavior>
-              <Nav.Link className={styles.navItem}>Home</Nav.Link>
-            </Link>
-            <Link href="/songs" passHref legacyBehavior>
-              <Nav.Link className={styles.navItem}>Músicas</Nav.Link>
-            </Link>
-            <Link href="/about" passHref legacyBehavior>
-              <Nav.Link className={styles.navItem}>Sobre</Nav.Link>
-            </Link>
-          </Nav>
-        </Navbar.Collapse>
+        
+        {!isAuthPage && (
+          <>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" className="custom-toggler" />
+            <Navbar.Collapse id="basic-navbar-nav">
+              <Nav className="ms-auto">
+                <Link href="/home" passHref legacyBehavior>
+                  <Nav.Link className={styles.navItem}>Home</Nav.Link>
+                </Link>
+                <Link href="/songs" passHref legacyBehavior>
+                  <Nav.Link className={styles.navItem}>Músicas</Nav.Link>
+                </Link>
+                <Link href="/about" passHref legacyBehavior>
+                  <Nav.Link className={styles.navItem}>Sobre</Nav.Link>
+                </Link>
+                
+                {isAuthenticated && (
+                  <Button 
+                    variant="outline-light" 
+                    className={styles.logoutButton}
+                    onClick={handleLogout}
+                  >
+                    Sair
+                  </Button>
+                )}
+              </Nav>
+            </Navbar.Collapse>
+          </>
+        )}
       </Container>
     </Navbar>
   );
