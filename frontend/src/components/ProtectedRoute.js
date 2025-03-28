@@ -3,35 +3,43 @@ import { useRouter } from 'next/router';
 import { AuthService } from '../services/authService';
 
 const ProtectedRoute = ({ children }) => {
-  const router = useRouter();
-  const [isValid, setIsValid] = useState(null);
-
-  useEffect(() => {
-    const verifyAuth = async () => {
-      try {
-        const isValidToken = await AuthService.validateToken();
-        
-        if (!isValidToken) {
-          AuthService.logout();
-          router.push('/');
-        } else {
-          setIsValid(true);
+    const router = useRouter();
+    const [authChecked, setAuthChecked] = useState(false);
+  
+    useEffect(() => {
+      const verifyAuth = async () => {
+        try {
+          const isValid = await AuthService.validateToken();
+          
+          if (!isValid) {
+            console.log('[ProtectedRoute] Token inválido, redirecionando...');
+            AuthService.logout();
+            router.push('/login');
+          } else {
+            console.log('[ProtectedRoute] Token válido, permitindo acesso');
+            setAuthChecked(true);
+          }
+        } catch (error) {
+          console.error('[ProtectedRoute] Erro na verificação:', error);
+          router.push('/login');
         }
-      } catch (error) {
-        console.error('Erro na verificação de autenticação:', error);
-        router.push('/');
-      }
-    };
-
-    verifyAuth();
-  }, [router]);
-
-
-  if (!isValid) {
-    return null;
-  }
-
-  return <>{children}</>;
-};
+      };
+  
+      verifyAuth();
+  
+      const authChangeListener = () => verifyAuth();
+      window.addEventListener('authChange', authChangeListener);
+      
+      return () => {
+        window.removeEventListener('authChange', authChangeListener);
+      };
+    }, [router]);
+  
+    if (!authChecked) {
+      return <div>Verificando autenticação...</div>;
+    }
+  
+    return <>{children}</>;
+  };
 
 export default ProtectedRoute;

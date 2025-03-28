@@ -26,21 +26,24 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('[Login] Iniciando submit do formulário');
+    console.log("[Login] Iniciando submit do formulário");
     setLoading(true);
     setError(null);
-  
+
     try {
-      console.log('[Login] Dados do formulário:', formData);
-      const response = await AuthService.login({
+      console.log("[Login] Dados do formulário:", formData);
+      const result = await AuthService.login({
         email: formData.email,
         password: formData.password,
       });
-  
-      console.log("[Login] Login bem-sucedido, resposta:", response);
-      console.log("[Login] Redirecionando para /home");
-  
-      router.push("/home");
+
+      if (result.success) {
+        console.log("[Login] Login bem-sucedido, resposta:", result);
+        console.log("[Login] Redirecionando para /home");
+
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        router.push("/home");
+      }
     } catch (err) {
       console.error("[Login] Erro no login:", err);
       setError(
@@ -51,7 +54,6 @@ const Login = () => {
       setLoading(false);
     }
   };
-
   return (
     <MainLayout title="Login - Spotify Clone">
       <div className={styles.container}>

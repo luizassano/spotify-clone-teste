@@ -24,40 +24,63 @@ export const AuthService = {
         email: credentials.email,
         password: credentials.password,
       });
-
-      console.log('[AuthService] Resposta do login:', response);
-
-      if (response.token) {
-        console.log('[AuthService] Token recebido, armazenando no localStorage');
-        this.setAuthData(response.token, credentials.email);
+  
+      console.log('[AuthService] Resposta completa:', response);
+      
+      const token = response.data?.token || response.token;
+      
+      if (!token) {
+        throw new Error('Token não recebido na resposta');
       }
-
-      return response;
+  
+      console.log('[AuthService] Token recebido, armazenando no localStorage');
+      
+      const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+      const userId = tokenPayload.id;
+      
+      if (!userId) {
+        throw new Error('ID do usuário não encontrado no token');
+      }
+  
+      const user = {
+        id: userId,
+        email: credentials.email
+      };
+  
+      this.setAuthData(token, user);
+      
+      return {
+        success: true,
+        token,
+        user
+      };
     } catch (error) {
       console.error('[AuthService] Erro no login:', error);
-      if (error.response?.status === 401) {
-        throw new Error("Email ou senha incorretos");
-      } else if (error.response?.status === 404) {
-        throw new Error("Usuário não encontrado");
-      }
-      throw new Error(error.message || "Erro ao fazer login");
+      throw error;
     }
   },
 
-  setAuthData(token, email) {
+  setAuthData(token, user) {
+    if (!token) {
+      throw new Error('Token não fornecido');
+    }
+  
     localStorage.setItem("authToken", token);
-    localStorage.setItem(
-      "userData",
-      JSON.stringify({ email })
-    );
+  
+    const userData = {
+      id: user?.id || null,
+      email: user?.email || 'unknown@example.com',
+      name: user?.name || 'Usuário'
+    };
+  
+    localStorage.setItem("userData", JSON.stringify(userData));
     window.dispatchEvent(new Event('authChange'));
   },
-
   async validateToken() {
-    const token = localStorage.getItem("authToken");
-    if (!token) return false;
-
     try {
+      const token = localStorage.getItem('authToken');
+      if (!token) return false;
+
       const parts = token.split('.');
       if (parts.length !== 3) {
         this.logout();
@@ -66,7 +89,8 @@ export const AuthService = {
 
       const payload = JSON.parse(atob(parts[1]));
       
-      if (payload.exp && payload.exp * 1000 < Date.now()) {
+      const now = Math.floor(Date.now() / 1000);
+      if (payload.exp && payload.exp < now) {
         this.logout();
         return false;
       }
@@ -78,10 +102,15 @@ export const AuthService = {
       return false;
     }
   },
-
   getCurrentUser() {
     const userData = localStorage.getItem("userData");
     return userData ? JSON.parse(userData) : null;
+  },
+
+getCurrentUserId() {
+    const user = this.getCurrentUser();
+    console.log('User data from storage:', user); 
+    return user?.id || null;
   },
 
   logout() {
