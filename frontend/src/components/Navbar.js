@@ -20,7 +20,7 @@ const CustomNavbar = () => {
         />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
-            <Link href="/" passHref legacyBehavior>
+            <Link href="/home" passHref legacyBehavior>
               <Nav.Link className={styles.navItem}>Home</Nav.Link>
             </Link>
             <Link href="/songs" passHref legacyBehavior>

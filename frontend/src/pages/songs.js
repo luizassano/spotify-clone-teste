@@ -8,7 +8,7 @@ const Songs = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true); // Indica que o componente já foi montado no cliente
+    setIsMounted(true); 
   }, []);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const Songs = () => {
   }, [isMounted]);
 
   if (!isMounted) {
-    return null; // Não renderiza nada no servidor
+    return null; 
   }
 
   return (
