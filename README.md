@@ -1,89 +1,131 @@
-# Developer Jobs
+# Spotify Clone
 
-## Team
+Este projeto é um **clone do Spotify** desenvolvido com **Next.js** (para o frontend), **Node.js** (para o backend), e **Bootstrap**. O objetivo é criar uma versão funcional e simples da plataforma Spotify, com foco em aprender como construir sistemas de música, autenticação e gerenciamento de playlists.
 
-You will work in a very engaged team, working in an agile environment and delivering high quality software from ground
-up
+## :book: Sobre o Projeto
 
-👉 What is **normal** here:
+Este é um projeto de estudo pessoal, inspirado no Spotify, criado com paixão por música e tecnologia. Devido à limitação de tempo e ao envolvimento em outros projetos, algumas funcionalidades não puderam ser implementadas na versão atual.
 
-- to build new products
-- to build new microservices
-- to automate stuff
-- to solve scalability problems
-- to improve our existing products every day
+O repositório está dividido em duas partes:
+- **Frontend**: O cliente (interface do usuário), desenvolvido com Next.js e React.
+- **Backend**: A parte do servidor, desenvolvida com Node.js e Express, que gerencia a autenticação de usuários, banco de dados e outras funcionalidades.
 
-👉 What is **not normal** here:
+## :computer: Tecnologias Utilizadas
 
-- to not have a growth mindset
-- to not like changes
-- to feel disconnected from the business world as a developer
+### Frontend
+- **Next.js**: Framework React para renderização do lado do servidor e melhor performance no frontend.
+- **React**: Biblioteca JavaScript para construção da interface de usuário.
+- **Bootstrap**: Framework CSS para criar uma interface simples e responsiva.
+- **SweetAlert2**: Para exibição de alertas e confirmações de maneira amigável.
 
-# Jobs
+### Backend
+- **Node.js**: Para gerenciar o backend da aplicação e autenticação de usuários.
+- **Express**: Framework para criar rotas e interagir com o banco de dados.
+- **MongoDB**: Banco de dados para armazenar informações de usuários, músicas e playlists.
+- **JWT (JSON Web Token)**: Para autenticação segura de usuários.
+- **bcryptjs**: Para criptografia de senhas.
 
-We have 3 types of jobs available: [**backend**](#backend), [**frontend**](#frontend) and
-[**fullstack**](#fullstack).
+## :wrench: Funcionalidades
 
-## Base requirements for all positions
+### Frontend
+- **Cadastro e Login de Usuário**: Sistema de autenticação baseado em JWT para login seguro.
+- **Criação de Playlists**: Permite aos usuários criar suas próprias playlists de músicas.
+- **Exibição de Músicas**: Exibição de uma lista de músicas para os usuários explorarem.
 
-All positions require:
+### Backend
+- **API de Autenticação**: Endpoints para login e registro de usuários.
+- **Gestão de Playlists e Músicas**: API para criar, atualizar e listar playlists, bem como adicionar e remover músicas de playlists.
 
-- [ ] Knowledge of javascript
-- [ ] Knowledge of git
-- [ ] Knowledge of terminal/shell
-- [ ] Passion to learn new things and solve complex problems
-- [ ] Proactivity
-- [ ] Curiosity and interest in business rules and logic
-- [ ] English (feel comfortable writing, reading and googling. Don't need to be fluent)
-- [ ] Deeply desire for professional growth
-- [ ] Great communication (verbal and writing)
-- [ ] Understanding of the education and financial market
-- [ ] Problem solving skills (using google, stack overflow, github, slack, and so on in a smart way)
+## :warning: Funcionalidades Faltantes
 
-# Backend
+Devido ao tempo limitado e ao trabalho em outros projetos, algumas funcionalidades não foram implementadas:
 
-## Description
+- **Player Completo**: A funcionalidade de player de música com controles como play, pause, skip, etc.
+- **Sistema de Playlists Avançado**: Falta de algumas opções de personalização para playlists, como edição de nome, imagem, etc.
+- **Integração com APIs de Música Reais**: A versão atual utiliza dados fictícios em vez de uma integração real com plataformas de música como Spotify.
 
-Backend developers will work on multiple projects to solve hard backend problems using Javascript, Nodejs, Express,
-MYsQL, , Python and AWS. They will deploy all these projects using these tools: Docker, ECS, GitHub Actions.
+## :construction_worker: Como Executar o Projeto
 
-## Backend requirements
+### Pré-requisitos
 
-- [ ] [All the base requirements](#base-requirements-for-all-positions)
-- [ ] Knowledge of Nodejs
-- [ ] Knowledge of REST api
-- [ ] Knowledge of database modeling
-- [ ] Knowledge of MySql
-- [ ] Understanding of tests and a testing framework (mocha, chai, jest or any other similar)
-- [ ] Good to know: Docker, AWS, understanding of distributed systems, Python (not required)
-- [ ] [Challenge](./backend/challenge.md)
+Certifique-se de ter o [Node.js](https://nodejs.org/) e o [npm](https://www.npmjs.com/) instalados.
 
-# Frontend
+### Passos
 
-## Description
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/seu-usuario/spotify-clone.git
+   ```
 
-Frontend developers will work on multiple projects to solve hard frontend and mobile problems using React, Gatsby and
-Context API.
+2. Navegue até o diretório do projeto:
+   ```bash
+   cd spotify-clone
+   ```
 
-## Frontend requirements
+3. Para rodar o **backend**:
 
-- [ ] [All the requirements listed above](#base-requirements-for-all-positions)
-- [ ] Worked with React in production for at least six months
-- [ ] Knowledge of Flexbox, styling and css
-- [ ] Knowledge of state management (it can be Redux, Mobx, ContextAPI or any related state management framework)
-- [ ] Experience working as a frontend developer in a production project for at least 1 year
-- [ ] [Challenge](./frontend/challenge.md)
+   - Acesse a pasta do backend:
+     ```bash
+     cd backend
+     ```
 
-# FullStack
+   - Instale as dependências:
+     ```bash
+     npm install
+     ```
 
-## Description
+   - Execute o servidor do backend:
+     ```bash
+     npm run dev
+     ```
 
-Fullstack developers build, test and deliver a backend and frontend parts of projects, having a global overview of the
-whole project and business rules.
+   O backend estará rodando na URL `http://localhost:5000` (ou outra porta configurada).
 
-## Requirements
+4. Para rodar o **frontend**:
 
-- [ ] [All the requirements for backend developers](#backend-requirements)
-- [ ] [All the requirements for frontend developers](#frontend-requirements)
-- [ ] Experience working as a full stack developer in a production project for at least 1 year
-- [ ] [Challenge](./fullstack/challenge.md)
+   - Acesse a pasta do frontend:
+     ```bash
+     cd frontend
+     ```
+
+   - Instale as dependências:
+     ```bash
+     npm install
+     ```
+
+   - Execute o servidor do frontend:
+     ```bash
+     npm run dev
+     ```
+
+   O frontend estará rodando na URL `http://localhost:3000`.
+
+5. Acesse o projeto em seu navegador.
+
+### Configuração do Banco de Dados (Backend)
+
+Certifique-se de configurar o MongoDB corretamente:
+
+1. Crie uma conta no [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) para obter uma instância de banco de dados.
+2. Adicione as variáveis de ambiente necessárias no arquivo `.env` no diretório do backend, como a URI de conexão com o banco de dados.
+
+## :memo: Considerações Finais
+
+Este é um projeto de aprendizado e um exemplo do meu trabalho na construção de um clone simples do Spotify. Mesmo com as limitações de tempo, procurei focar na qualidade do código e na criação de uma estrutura que permita fácil expansão no futuro. 
+
+Se eu tivesse mais tempo, teria dado mais atenção ao design e funcionalidade do player e integrado com APIs reais de música. No entanto, esse projeto mostra minha capacidade de construir uma aplicação do início ao fim, com as principais funcionalidades de um serviço de streaming de música.
+
+## :link: Links Úteis
+
+- [Documentação do Next.js](https://nextjs.org/docs)
+- [Documentação do Node.js](https://nodejs.org/en/docs/)
+- [Documentação do Express](https://expressjs.com/)
+- [Documentação do MongoDB](https://www.mongodb.com/docs/)
+- [Documentação do Bootstrap](https://getbootstrap.com/)
+
+## :handshake: Contribuições
+
+Se você quiser contribuir para este projeto, fique à vontade para abrir uma *pull request* ou enviar uma *issue* com sugestões.
+
+---
+
