@@ -46,8 +46,54 @@ class PlaylistModel {
     }
   }
 
+  static async updatePlaylist(id, { name, description }) {
+    try {
+      await db.query(
+        'UPDATE playlists SET name = ?, description = ? WHERE id = ?',
+        [name, description, id]
+      );
+      
+      const [updatedPlaylist] = await db.query(
+        'SELECT * FROM playlists WHERE id = ?',
+        [id]
+      );
+      
+      return updatedPlaylist[0];
+    } catch (error) {
+      console.error('Erro ao atualizar playlist:', error);
+      throw error;
+    }
+  }
+
+  static async deletePlaylist(id) {
+    try {
+      const playlist = await this.getPlaylistById(id);
+      if (!playlist) {
+        throw new Error('Playlist não encontrada');
+      }
+
+      await db.query('DELETE FROM playlist_songs WHERE playlist_id = ?', [id]);
+      
+      await db.query('DELETE FROM playlists WHERE id = ?', [id]);
+      
+      return true;
+    } catch (error) {
+      console.error('Erro ao deletar playlist:', error);
+      throw error;
+    }
+  }
+
   static async addSongToPlaylist(playlistId, songId) {
     try {
+      const [existing] = await db.query(
+        'SELECT * FROM playlist_songs WHERE playlist_id = ? AND song_id = ?',
+        [playlistId, songId]
+      );
+      
+      if (existing.length > 0) {
+        throw new Error('Música já está na playlist');
+      }
+
       await db.query(
         'INSERT INTO playlist_songs (playlist_id, song_id) VALUES (?, ?)',
         [playlistId, songId]
@@ -69,6 +115,29 @@ class PlaylistModel {
       return songs;
     } catch (error) {
       console.error('Erro ao buscar músicas da playlist:', error);
+      throw error;
+    }
+  }
+
+  static async removeSongFromPlaylist(playlistId, songId) {
+    try {
+      const [existing] = await db.query(
+        'SELECT * FROM playlist_songs WHERE playlist_id = ? AND song_id = ?',
+        [playlistId, songId]
+      );
+      
+      if (existing.length === 0) {
+        throw new Error('Música não encontrada na playlist');
+      }
+
+      await db.query(
+        'DELETE FROM playlist_songs WHERE playlist_id = ? AND song_id = ?',
+        [playlistId, songId]
+      );
+      
+      return true;
+    } catch (error) {
+      console.error('Erro ao remover música da playlist:', error);
       throw error;
     }
   }

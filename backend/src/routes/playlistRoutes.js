@@ -297,4 +297,63 @@ router.delete('/:playlistId/songs/:songId', removeSongFromPlaylist);
  *           format: date-time
  */
 
+/**
+ * @swagger
+ * /api/playlists/{id}:
+ *   delete:
+ *     summary: Remove uma playlist e todas suas músicas associadas
+ *     tags: [Playlists]
+ *     description: |
+ *       Esta operação remove permanentemente uma playlist e todas as relações
+ *       com músicas na tabela playlist_songs.
+ *       Requer confirmação do usuário no frontend.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         example: 1
+ *         description: ID da playlist a ser removida
+ *     responses:
+ *       200:
+ *         description: Playlist removida com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Playlist removida com sucesso"
+ *                 deletedCount:
+ *                   type: integer
+ *                   description: Número de músicas removidas da playlist
+ *                   example: 3
+ *       401:
+ *         description: Não autorizado (usuário não é dono da playlist)
+ *       404:
+ *         description: Playlist não encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Playlist não encontrada"
+ *       500:
+ *         description: Erro interno no servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Erro ao remover playlist"
+ */
+router.delete('/:id', deletePlaylist);
+
 module.exports = router;

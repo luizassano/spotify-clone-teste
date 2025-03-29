@@ -57,6 +57,10 @@ exports.updatePlaylist = async (req, res) => {
     const { id } = req.params;
     const { name, description } = req.body;
 
+    if (!name) {
+      return res.status(400).json({ message: "Nome é obrigatório" });
+    }
+
     const updatedPlaylist = await PlaylistModel.updatePlaylist(id, {
       name,
       description,
@@ -76,12 +80,12 @@ exports.updatePlaylist = async (req, res) => {
 exports.deletePlaylist = async (req, res) => {
   try {
     const { id } = req.params;
-    const deleted = await PlaylistModel.deletePlaylist(id);
-    if (!deleted) {
-      return res.status(404).json({ message: "Playlist não encontrada" });
-    }
+    await PlaylistModel.deletePlaylist(id);
     res.json({ message: "Playlist removida com sucesso" });
   } catch (error) {
+    if (error.message === 'Playlist não encontrada') {
+      return res.status(404).json({ message: error.message });
+    }
     console.error("Erro ao remover playlist:", error);
     res
       .status(500)
@@ -101,6 +105,9 @@ exports.addSongToPlaylist = async (req, res) => {
     await PlaylistModel.addSongToPlaylist(id, songId);
     res.json({ message: "Música adicionada à playlist com sucesso" });
   } catch (error) {
+    if (error.message === 'Música já está na playlist') {
+      return res.status(400).json({ message: error.message });
+    }
     console.error("Erro ao adicionar música à playlist:", error);
     res.status(500).json({
       message: "Erro ao adicionar música à playlist",
@@ -126,21 +133,21 @@ exports.getPlaylistSongs = async (req, res) => {
 exports.removeSongFromPlaylist = async (req, res) => {
   try {
     const { playlistId, songId } = req.params;
-    const removed = await PlaylistModel.removeSongFromPlaylist(
-      playlistId,
-      songId
-    );
-    if (!removed) {
-      return res
-        .status(404)
-        .json({ message: "Música ou playlist não encontrada" });
-    }
-    res.json({ message: "Música removida da playlist com sucesso" });
+    
+    await PlaylistModel.removeSongFromPlaylist(playlistId, songId);
+    
+    res.status(200).json({
+      success: true,
+      message: 'Música removida da playlist com sucesso'
+    });
   } catch (error) {
-    console.error("Erro ao remover música da playlist:", error);
-    res.status(500).json({
-      message: "Erro ao remover música da playlist",
-      error: error.message,
+    if (error.message === 'Música não encontrada na playlist') {
+      return res.status(404).json({ message: error.message });
+    }
+    console.error('Erro ao remover música da playlist:', error);
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Erro ao remover música da playlist'
     });
   }
 };
