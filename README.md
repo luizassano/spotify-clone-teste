@@ -1,3 +1,6 @@
+Aqui está o arquivo `README.md` atualizado com a descrição do projeto, funcionalidades, como executar e outras informações relevantes, conforme sua solicitação:
+
+```markdown
 # Spotify Clone
 
 Este projeto é um **clone do Spotify** desenvolvido com **Next.js** (para o frontend), **Node.js** (para o backend), e **Bootstrap**. O objetivo é criar uma versão funcional e simples da plataforma Spotify, com foco em aprender como construir sistemas de música, autenticação e gerenciamento de playlists.
@@ -128,4 +131,6 @@ Se eu tivesse mais tempo, teria dado mais atenção ao design e funcionalidade d
 Se você quiser contribuir para este projeto, fique à vontade para abrir uma *pull request* ou enviar uma *issue* com sugestões.
 
 ---
+```
 
+Agora você tem um arquivo `README.md` completo e organizado para o seu projeto de clone do Spotify. Ele descreve o projeto, tecnologias utilizadas, funcionalidades implementadas e como executar o projeto, bem como informações sobre funcionalidades faltantes e contribuições.
