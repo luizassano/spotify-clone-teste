@@ -13,10 +13,14 @@ import {
 import Link from "next/link";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { useState, useEffect } from "react";
-import { MusicService } from "../services/MusicService";
-import { PlaylistService } from "../services/PlaylistService";
+import { MusicService } from "../services/musicService";
+import { PlaylistService } from "../services/playlistService";
 import styles from "../styles/songs.module.css";
 import { AuthService } from "../services/authService";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 const Songs = () => {
   const [isClient, setIsClient] = useState(false);
@@ -52,8 +56,8 @@ const Songs = () => {
     setIsClient(true);
 
     const loadData = async () => {
-      if (typeof window === 'undefined') return;
-      
+      if (typeof window === "undefined") return;
+
       setLoading(true);
       setError(null);
       try {
@@ -64,7 +68,7 @@ const Songs = () => {
         setLoading(false);
       }
     };
-    
+
     loadData();
   }, []);
 
@@ -139,11 +143,20 @@ const Songs = () => {
     try {
       await MusicService.deleteSong(songId);
       await fetchSongs();
-      setShowDeleteConfirmation(false);
-      setError(null);
+
+      MySwal.fire({
+        icon: "success",
+        title: "Música excluída",
+        text: "A música foi removida com sucesso.",
+        confirmButtonColor: "#1DB954",
+      });
     } catch (err) {
-      console.error("Erro ao excluir música:", err);
-      setError(err.message);
+      MySwal.fire({
+        icon: "error",
+        title: "Erro ao excluir",
+        text: err.message,
+        confirmButtonColor: "#d33",
+      });
     }
   };
 
@@ -218,18 +231,45 @@ const Songs = () => {
     if (!selectedPlaylist || !selectedSong) return;
 
     try {
+      const playlistSongs = await PlaylistService.getPlaylistSongs(
+        selectedPlaylist.id
+      );
+      const songAlreadyInPlaylist = playlistSongs.some(
+        (song) => song.id === selectedSong.id
+      );
+
+      if (songAlreadyInPlaylist) {
+        MySwal.fire({
+          icon: "warning",
+          title: "Música já adicionada",
+          text: "Esta música já está na playlist!",
+          confirmButtonColor: "#1DB954",
+        });
+        return;
+      }
+
       await PlaylistService.addSongToPlaylist(
         selectedPlaylist.id,
         selectedSong.id
       );
 
+      MySwal.fire({
+        icon: "success",
+        title: "Música adicionada!",
+        text: "A música foi adicionada à playlist com sucesso.",
+        confirmButtonColor: "#1DB954",
+      });
+
       setSelectedPlaylist(null);
       setSelectedSong(null);
       await fetchPlaylists();
-      setError(null);
     } catch (err) {
-      console.error("Erro ao adicionar música à playlist:", err);
-      setError(err.message);
+      MySwal.fire({
+        icon: "error",
+        title: "Erro",
+        text: err.message,
+        confirmButtonColor: "#d33",
+      });
     }
   };
 
@@ -267,14 +307,30 @@ const Songs = () => {
   };
 
   const confirmDelete = (type, id) => {
-    setItemToDelete({ type, id });
-    setShowDeleteConfirmation(true);
+    MySwal.fire({
+      title: "Tem certeza?",
+      text: "Esta ação não pode ser desfeita!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Sim, excluir!",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (type === "song") {
+          handleDeleteSong(id);
+        } else if (type === "playlist") {
+          handleDeletePlaylist(id);
+        }
+      }
+    });
   };
 
   const executeDelete = () => {
-    if (itemToDelete.type === 'song') {
+    if (itemToDelete.type === "song") {
       handleDeleteSong(itemToDelete.id);
-    } else if (itemToDelete.type === 'playlist') {
+    } else if (itemToDelete.type === "playlist") {
       handleDeletePlaylist(itemToDelete.id);
     }
   };
@@ -358,7 +414,7 @@ const Songs = () => {
                               size="sm"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                confirmDelete('song', song.id);
+                                confirmDelete("song", song.id);
                               }}
                               className="me-2"
                             >
@@ -421,7 +477,7 @@ const Songs = () => {
                               size="sm"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                confirmDelete('playlist', playlist.id);
+                                confirmDelete("playlist", playlist.id);
                               }}
                               className="me-2"
                             >
@@ -457,8 +513,16 @@ const Songs = () => {
                   size="lg"
                   onClick={handleAddSongToPlaylist}
                   className={styles.actionButton}
+                  disabled={
+                    !selectedPlaylist ||
+                    !selectedSong ||
+                    (selectedPlaylist.songs?.some(
+                      (song) => song.id === selectedSong.id
+                    ) ??
+                      false)
+                  }
                 >
-                  Adicionar "{selectedSong.title}" a "{selectedPlaylist.name}"
+                  Adicionar "{selectedSong?.title}" a "{selectedPlaylist?.name}"
                 </Button>
               </div>
             )}
@@ -570,7 +634,7 @@ const Songs = () => {
                   <Form.Label>Título *</Form.Label>
                   <Form.Control
                     type="text"
-                    value={editingSong?.title || ''}
+                    value={editingSong?.title || ""}
                     onChange={(e) =>
                       setEditingSong({ ...editingSong, title: e.target.value })
                     }
@@ -581,7 +645,7 @@ const Songs = () => {
                   <Form.Label>Artista *</Form.Label>
                   <Form.Control
                     type="text"
-                    value={editingSong?.artist || ''}
+                    value={editingSong?.artist || ""}
                     onChange={(e) =>
                       setEditingSong({ ...editingSong, artist: e.target.value })
                     }
@@ -592,7 +656,7 @@ const Songs = () => {
                   <Form.Label>Álbum</Form.Label>
                   <Form.Control
                     type="text"
-                    value={editingSong?.album || ''}
+                    value={editingSong?.album || ""}
                     onChange={(e) =>
                       setEditingSong({ ...editingSong, album: e.target.value })
                     }
@@ -602,9 +666,12 @@ const Songs = () => {
                   <Form.Label>Duração (mm:ss) *</Form.Label>
                   <Form.Control
                     type="text"
-                    value={editingSong?.duration || ''}
+                    value={editingSong?.duration || ""}
                     onChange={(e) =>
-                      setEditingSong({ ...editingSong, duration: e.target.value })
+                      setEditingSong({
+                        ...editingSong,
+                        duration: e.target.value,
+                      })
                     }
                     placeholder="3:45"
                     required
@@ -691,9 +758,12 @@ const Songs = () => {
                   <Form.Label>Nome *</Form.Label>
                   <Form.Control
                     type="text"
-                    value={editingPlaylist?.name || ''}
+                    value={editingPlaylist?.name || ""}
                     onChange={(e) =>
-                      setEditingPlaylist({ ...editingPlaylist, name: e.target.value })
+                      setEditingPlaylist({
+                        ...editingPlaylist,
+                        name: e.target.value,
+                      })
                     }
                     required
                   />
@@ -703,7 +773,7 @@ const Songs = () => {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    value={editingPlaylist?.description || ''}
+                    value={editingPlaylist?.description || ""}
                     onChange={(e) =>
                       setEditingPlaylist({
                         ...editingPlaylist,
@@ -790,10 +860,16 @@ const Songs = () => {
               <Modal.Title>Confirmar Exclusão</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              {itemToDelete.type === 'song' ? (
-                <p>Tem certeza que deseja excluir esta música? Esta ação não pode ser desfeita.</p>
+              {itemToDelete.type === "song" ? (
+                <p>
+                  Tem certeza que deseja excluir esta música? Esta ação não pode
+                  ser desfeita.
+                </p>
               ) : (
-                <p>Tem certeza que deseja excluir esta playlist? Todas as músicas associadas serão removidas. Esta ação não pode ser desfeita.</p>
+                <p>
+                  Tem certeza que deseja excluir esta playlist? Todas as músicas
+                  associadas serão removidas. Esta ação não pode ser desfeita.
+                </p>
               )}
             </Modal.Body>
             <Modal.Footer>
