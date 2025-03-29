@@ -27,7 +27,7 @@ const ProtectedRoute = ({ children }) => {
 
           if (!isValid) {
             AuthService.logout();
-            router.push('/login');
+            router.push('/');
           }
         }
       } catch (error) {
@@ -36,7 +36,7 @@ const ProtectedRoute = ({ children }) => {
             checked: true,
             isValid: false
           });
-          router.push('/login');
+          router.push('/');
         }
       }
     };

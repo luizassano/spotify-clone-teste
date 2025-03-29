@@ -20,34 +20,39 @@ import { AuthService } from "../services/authService";
 
 const Songs = () => {
   const [isClient, setIsClient] = useState(false);
-
   const [songs, setSongs] = useState([]);
   const [playlists, setPlaylists] = useState([]);
   const [showAddSongModal, setShowAddSongModal] = useState(false);
   const [showAddPlaylistModal, setShowAddPlaylistModal] = useState(false);
+  const [showEditSongModal, setShowEditSongModal] = useState(false);
+  const [showEditPlaylistModal, setShowEditPlaylistModal] = useState(false);
   const [newSong, setNewSong] = useState({
     title: "",
     artist: "",
     album: "",
     duration: "0:00",
   });
+  const [editingSong, setEditingSong] = useState(null);
   const [newPlaylist, setNewPlaylist] = useState({
     name: "",
     description: "",
     userId: null,
   });
+  const [editingPlaylist, setEditingPlaylist] = useState(null);
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const [selectedSong, setSelectedSong] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showPlaylistSongsModal, setShowPlaylistSongsModal] = useState(false);
   const [playlistSongs, setPlaylistSongs] = useState([]);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState({ type: null, id: null });
 
   useEffect(() => {
-    setIsClient(true); // Marca que estamos no cliente
+    setIsClient(true);
 
     const loadData = async () => {
-      if (typeof window === 'undefined') return; // Não executa no servidor
+      if (typeof window === 'undefined') return;
       
       setLoading(true);
       setError(null);
@@ -62,12 +67,11 @@ const Songs = () => {
     
     loadData();
   }, []);
+
   const fetchSongs = async () => {
     try {
-      console.log("Iniciando busca por músicas...");
       const result = await MusicService.getAllSongs();
-      console.log("Resultado recebido:", result);
-      setSongs(result); // Usa o resultado diretamente
+      setSongs(result);
     } catch (err) {
       console.error("Erro completo:", err);
       setError(err.message);
@@ -77,9 +81,7 @@ const Songs = () => {
 
   const fetchPlaylists = async () => {
     try {
-      console.log("Iniciando busca por playlists...");
       const result = await PlaylistService.getAllPlaylists();
-      console.log("Resultado recebido:", result);
       setPlaylists(result);
     } catch (err) {
       console.error("Erro completo:", err);
@@ -107,6 +109,40 @@ const Songs = () => {
       setError(null);
     } catch (err) {
       console.error("Erro ao adicionar música:", err);
+      setError(err.message);
+    }
+  };
+
+  const handleEditSong = async () => {
+    try {
+      if (!editingSong.title || !editingSong.artist || !editingSong.duration) {
+        throw new Error("Preencha título, artista e duração");
+      }
+
+      await MusicService.updateSong(editingSong.id, {
+        title: editingSong.title,
+        artist: editingSong.artist,
+        album: editingSong.album || null,
+        duration: editingSong.duration,
+      });
+
+      setShowEditSongModal(false);
+      await fetchSongs();
+      setError(null);
+    } catch (err) {
+      console.error("Erro ao editar música:", err);
+      setError(err.message);
+    }
+  };
+
+  const handleDeleteSong = async (songId) => {
+    try {
+      await MusicService.deleteSong(songId);
+      await fetchSongs();
+      setShowDeleteConfirmation(false);
+      setError(null);
+    } catch (err) {
+      console.error("Erro ao excluir música:", err);
       setError(err.message);
     }
   };
@@ -142,6 +178,38 @@ const Songs = () => {
       setError(null);
     } catch (err) {
       console.error("Erro ao criar playlist:", err);
+      setError(err.message);
+    }
+  };
+
+  const handleEditPlaylist = async () => {
+    try {
+      if (!editingPlaylist.name) {
+        throw new Error("Nome da playlist é obrigatório");
+      }
+
+      await PlaylistService.updatePlaylist(editingPlaylist.id, {
+        name: editingPlaylist.name,
+        description: editingPlaylist.description,
+      });
+
+      setShowEditPlaylistModal(false);
+      await fetchPlaylists();
+      setError(null);
+    } catch (err) {
+      console.error("Erro ao editar playlist:", err);
+      setError(err.message);
+    }
+  };
+
+  const handleDeletePlaylist = async (playlistId) => {
+    try {
+      await PlaylistService.deletePlaylist(playlistId);
+      await fetchPlaylists();
+      setShowDeleteConfirmation(false);
+      setError(null);
+    } catch (err) {
+      console.error("Erro ao excluir playlist:", err);
       setError(err.message);
     }
   };
@@ -185,6 +253,29 @@ const Songs = () => {
     } catch (err) {
       console.error("Erro ao remover música da playlist:", err);
       setError(err.message);
+    }
+  };
+
+  const openEditSongModal = (song) => {
+    setEditingSong({ ...song });
+    setShowEditSongModal(true);
+  };
+
+  const openEditPlaylistModal = (playlist) => {
+    setEditingPlaylist({ ...playlist });
+    setShowEditPlaylistModal(true);
+  };
+
+  const confirmDelete = (type, id) => {
+    setItemToDelete({ type, id });
+    setShowDeleteConfirmation(true);
+  };
+
+  const executeDelete = () => {
+    if (itemToDelete.type === 'song') {
+      handleDeleteSong(itemToDelete.id);
+    } else if (itemToDelete.type === 'playlist') {
+      handleDeletePlaylist(itemToDelete.id);
     }
   };
 
@@ -250,9 +341,33 @@ const Songs = () => {
                               {song.artist} • {song.album} • {song.duration}
                             </div>
                           </div>
-                          <Button variant="outline-light" size="sm">
-                            ▶️
-                          </Button>
+                          <div>
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openEditSongModal(song);
+                              }}
+                              className="me-2"
+                            >
+                              Editar
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                confirmDelete('song', song.id);
+                              }}
+                              className="me-2"
+                            >
+                              Excluir
+                            </Button>
+                            <Button variant="outline-light" size="sm">
+                              ▶️
+                            </Button>
+                          </div>
                         </ListGroup.Item>
                       ))}
                     </ListGroup>
@@ -290,6 +405,28 @@ const Songs = () => {
                             </div>
                           </div>
                           <div>
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openEditPlaylistModal(playlist);
+                              }}
+                              className="me-2"
+                            >
+                              Editar
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                confirmDelete('playlist', playlist.id);
+                              }}
+                              className="me-2"
+                            >
+                              Excluir
+                            </Button>
                             <Button
                               variant="outline-info"
                               size="sm"
@@ -348,6 +485,7 @@ const Songs = () => {
             </div>
           </Container>
 
+          {/* Modal para adicionar música */}
           <Modal
             show={showAddSongModal}
             onHide={() => setShowAddSongModal(false)}
@@ -417,6 +555,77 @@ const Songs = () => {
             </Modal.Footer>
           </Modal>
 
+          {/* Modal para editar música */}
+          <Modal
+            show={showEditSongModal}
+            onHide={() => setShowEditSongModal(false)}
+            centered
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Editar Música</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group className="mb-3">
+                  <Form.Label>Título *</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={editingSong?.title || ''}
+                    onChange={(e) =>
+                      setEditingSong({ ...editingSong, title: e.target.value })
+                    }
+                    required
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Artista *</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={editingSong?.artist || ''}
+                    onChange={(e) =>
+                      setEditingSong({ ...editingSong, artist: e.target.value })
+                    }
+                    required
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Álbum</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={editingSong?.album || ''}
+                    onChange={(e) =>
+                      setEditingSong({ ...editingSong, album: e.target.value })
+                    }
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Duração (mm:ss) *</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={editingSong?.duration || ''}
+                    onChange={(e) =>
+                      setEditingSong({ ...editingSong, duration: e.target.value })
+                    }
+                    placeholder="3:45"
+                    required
+                  />
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                onClick={() => setShowEditSongModal(false)}
+              >
+                Cancelar
+              </Button>
+              <Button variant="success" onClick={handleEditSong}>
+                Salvar Alterações
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          {/* Modal para adicionar playlist */}
           <Modal
             show={showAddPlaylistModal}
             onHide={() => setShowAddPlaylistModal(false)}
@@ -467,6 +676,58 @@ const Songs = () => {
             </Modal.Footer>
           </Modal>
 
+          {/* Modal para editar playlist */}
+          <Modal
+            show={showEditPlaylistModal}
+            onHide={() => setShowEditPlaylistModal(false)}
+            centered
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Editar Playlist</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group className="mb-3">
+                  <Form.Label>Nome *</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={editingPlaylist?.name || ''}
+                    onChange={(e) =>
+                      setEditingPlaylist({ ...editingPlaylist, name: e.target.value })
+                    }
+                    required
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Descrição</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    value={editingPlaylist?.description || ''}
+                    onChange={(e) =>
+                      setEditingPlaylist({
+                        ...editingPlaylist,
+                        description: e.target.value,
+                      })
+                    }
+                  />
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                onClick={() => setShowEditPlaylistModal(false)}
+              >
+                Cancelar
+              </Button>
+              <Button variant="success" onClick={handleEditPlaylist}>
+                Salvar Alterações
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          {/* Modal para visualizar músicas da playlist */}
           <Modal
             show={showPlaylistSongsModal}
             onHide={() => setShowPlaylistSongsModal(false)}
@@ -515,6 +776,35 @@ const Songs = () => {
                 onClick={() => setShowPlaylistSongsModal(false)}
               >
                 Fechar
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          {/* Modal de confirmação para exclusão */}
+          <Modal
+            show={showDeleteConfirmation}
+            onHide={() => setShowDeleteConfirmation(false)}
+            centered
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Confirmar Exclusão</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {itemToDelete.type === 'song' ? (
+                <p>Tem certeza que deseja excluir esta música? Esta ação não pode ser desfeita.</p>
+              ) : (
+                <p>Tem certeza que deseja excluir esta playlist? Todas as músicas associadas serão removidas. Esta ação não pode ser desfeita.</p>
+              )}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                onClick={() => setShowDeleteConfirmation(false)}
+              >
+                Cancelar
+              </Button>
+              <Button variant="danger" onClick={executeDelete}>
+                Confirmar Exclusão
               </Button>
             </Modal.Footer>
           </Modal>
