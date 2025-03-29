@@ -103,31 +103,83 @@ export const AuthService = {
     }
   },
   getCurrentUser() {
-    const userData = localStorage.getItem("userData");
-    return userData ? JSON.parse(userData) : null;
+    if (typeof window === 'undefined') return null;
+    
+    try {
+      const userData = localStorage.getItem("userData");
+      return userData ? JSON.parse(userData) : null;
+    } catch (error) {
+      console.error('Erro ao obter usuário:', error);
+      return null;
+    }
   },
 
-getCurrentUserId() {
-    const user = this.getCurrentUser();
-    console.log('User data from storage:', user); 
-    return user?.id || null;
+  getCurrentUserId() {
+    if (typeof window === 'undefined') return null;
+    return this.getCurrentUser()?.id || null;
+  },
+
+  async validateToken() {
+    if (typeof window === 'undefined') return false;
+    
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) return false;
+
+      const parts = token.split('.');
+      if (parts.length !== 3) {
+        this.logout();
+        return false;
+      }
+
+      const payload = JSON.parse(atob(parts[1]));
+      const now = Math.floor(Date.now() / 1000);
+      
+      if (payload.exp && payload.exp < now) {
+        this.logout();
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Erro ao validar token:', error);
+      this.logout();
+      return false;
+    }
   },
 
   logout() {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userData");
-    window.dispatchEvent(new Event('authChange'));
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("userData");
+      window.dispatchEvent(new CustomEvent('authStateChanged', {
+        detail: { isAuthenticated: false }
+      }));
+    }
   },
 
   isAuthenticated() {
-    if (typeof window === 'undefined') {
+    if (typeof window === 'undefined') return false;
+    
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return false;
+
+      const parts = token.split('.');
+      if (parts.length !== 3) return false;
+
+      return true;
+    } catch (error) {
+      console.error('Erro ao verificar autenticação:', error);
       return false;
     }
-    return !!localStorage.getItem("authToken");
   },
 
   onAuthChange(callback) {
-    window.addEventListener('authChange', callback);
-    return () => window.removeEventListener('authChange', callback);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('authChange', callback);
+      return () => window.removeEventListener('authChange', callback);
+    }
+    return () => {}; 
   }
 };

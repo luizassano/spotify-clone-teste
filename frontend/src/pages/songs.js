@@ -17,7 +17,10 @@ import { MusicService } from "../services/MusicService";
 import { PlaylistService } from "../services/PlaylistService";
 import styles from "../styles/songs.module.css";
 import { AuthService } from "../services/authService";
+
 const Songs = () => {
+  const [isClient, setIsClient] = useState(false);
+
   const [songs, setSongs] = useState([]);
   const [playlists, setPlaylists] = useState([]);
   const [showAddSongModal, setShowAddSongModal] = useState(false);
@@ -41,37 +44,47 @@ const Songs = () => {
   const [playlistSongs, setPlaylistSongs] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    setIsClient(true); // Marca que estamos no cliente
+
+    const loadData = async () => {
+      if (typeof window === 'undefined') return; // Não executa no servidor
+      
+      setLoading(true);
+      setError(null);
       try {
-        await fetchSongs();
-        await fetchPlaylists();
+        await Promise.all([fetchSongs(), fetchPlaylists()]);
       } catch (error) {
-        console.error("Erro ao carregar dados:", error);
-        setError("Erro ao carregar dados. Tente novamente mais tarde.");
+        console.error("Erro geral ao carregar:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchData();
+    
+    loadData();
   }, []);
-
   const fetchSongs = async () => {
     try {
-      const songsData = await MusicService.getAllSongs();
-      setSongs(Array.isArray(songsData) ? songsData : []);
+      console.log("Iniciando busca por músicas...");
+      const result = await MusicService.getAllSongs();
+      console.log("Resultado recebido:", result);
+      setSongs(result); // Usa o resultado diretamente
     } catch (err) {
-      console.error("Erro ao carregar músicas:", err);
-      throw err;
+      console.error("Erro completo:", err);
+      setError(err.message);
+      setSongs([]);
     }
   };
 
   const fetchPlaylists = async () => {
     try {
-      const playlistsData = await PlaylistService.getAllPlaylists();
-      setPlaylists(Array.isArray(playlistsData) ? playlistsData : []);
+      console.log("Iniciando busca por playlists...");
+      const result = await PlaylistService.getAllPlaylists();
+      console.log("Resultado recebido:", result);
+      setPlaylists(result);
     } catch (err) {
-      console.error("Erro ao carregar playlists:", err);
-      throw err;
+      console.error("Erro completo:", err);
+      setError(err.message);
+      setPlaylists([]);
     }
   };
 
@@ -175,7 +188,7 @@ const Songs = () => {
     }
   };
 
-  if (loading) {
+  if (!isClient) {
     return (
       <MainLayout title="Carregando... - Spotify Clone">
         <ProtectedRoute>

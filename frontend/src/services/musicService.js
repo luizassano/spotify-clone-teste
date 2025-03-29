@@ -3,11 +3,16 @@ import api from "./api";
 export const MusicService = {
   async getAllSongs() {
     try {
-      const response = await api.get("/songs");
-      return response.data;
+      const { data } = await api.get("/songs");
+      console.log("Dados retornados pelo serviço:", data);
+      return data || [];
     } catch (error) {
-      console.error('[MusicService] Erro ao buscar músicas:', error);
-      throw new Error(error.response?.data?.message || "Erro ao carregar músicas");
+      console.error("Erro detalhado:", {
+        config: error.config,
+        response: error.response,
+        message: error.message,
+      });
+      throw error;
     }
   },
 
@@ -16,7 +21,10 @@ export const MusicService = {
       const response = await api.get(`/songs/${id}`);
       return response.data;
     } catch (error) {
-      console.error(`[MusicService] Erro ao buscar música com ID ${id}:`, error);
+      console.error(
+        `[MusicService] Erro ao buscar música com ID ${id}:`,
+        error
+      );
       if (error.response?.status === 404) {
         throw new Error("Música não encontrada");
       }
@@ -28,13 +36,13 @@ export const MusicService = {
     try {
       const response = await api.post("/songs", {
         title: songData.title,
-        artist: songData.artist,       
-        album: songData.album,         
-        duration: songData.duration
+        artist: songData.artist,
+        album: songData.album,
+        duration: songData.duration,
       });
       return response.data;
     } catch (error) {
-      console.error('[MusicService] Erro ao criar música:', error);
+      console.error("[MusicService] Erro ao criar música:", error);
       throw new Error(error.response?.data?.message || "Erro ao criar música");
     }
   },
@@ -43,17 +51,22 @@ export const MusicService = {
     try {
       const response = await api.put(`/songs/${id}`, {
         title: songData.title,
-        artist: songData.artist,      
-        album: songData.album,        
-        duration: songData.duration
+        artist: songData.artist,
+        album: songData.album,
+        duration: songData.duration,
       });
       return response.data;
     } catch (error) {
-      console.error(`[MusicService] Erro ao atualizar música com ID ${id}:`, error);
+      console.error(
+        `[MusicService] Erro ao atualizar música com ID ${id}:`,
+        error
+      );
       if (error.response?.status === 404) {
         throw new Error("Música não encontrada");
       }
-      throw new Error(error.response?.data?.message || "Erro ao atualizar música");
+      throw new Error(
+        error.response?.data?.message || "Erro ao atualizar música"
+      );
     }
   },
 
@@ -62,23 +75,30 @@ export const MusicService = {
       const response = await api.delete(`/songs/${id}`);
       return response.data;
     } catch (error) {
-      console.error(`[MusicService] Erro ao deletar música com ID ${id}:`, error);
+      console.error(
+        `[MusicService] Erro ao deletar música com ID ${id}:`,
+        error
+      );
       if (error.response?.status === 404) {
         throw new Error("Música não encontrada");
       }
-      throw new Error(error.response?.data?.message || "Erro ao deletar música");
+      throw new Error(
+        error.response?.data?.message || "Erro ao deletar música"
+      );
     }
   },
 
   async searchSongs(query) {
     try {
       const response = await api.get("/songs/search", {
-        params: { q: query }
+        params: { q: query },
       });
       return response.data;
     } catch (error) {
-      console.error('[MusicService] Erro ao buscar músicas:', error);
-      throw new Error(error.response?.data?.message || "Erro ao buscar músicas");
+      console.error("[MusicService] Erro ao buscar músicas:", error);
+      throw new Error(
+        error.response?.data?.message || "Erro ao buscar músicas"
+      );
     }
-  }
+  },
 };
